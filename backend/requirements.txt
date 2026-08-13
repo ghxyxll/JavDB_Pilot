@@ -1,0 +1,15 @@
+# Web 框架与高性能异步服务
+fastapi>=0.100.0
+uvicorn[standard]>=0.22.0
+pydantic>=2.0.0
+
+# 网络请求与 HTML 解析
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+
+# 免无头浏览器直登与 Chrome 指纹伪装
+curl_cffi>=0.5.10
+
+# 后台定时任务调度器
+apscheduler>=3.10.0
+cryptography

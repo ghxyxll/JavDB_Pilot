@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  javdb-autospider:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: javdb-autospider:v1.2
+    container_name: javdb_autospider
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - TZ=Asia/Shanghai
+      - CONFIG_PATH=/config/config.ini
+      - DATA_DIR=/data
+      - ENABLE_DOCS=false
+    volumes:
+      # 1. 配置文件目录映射 (宿主机 ./config -> 容器 /config)
+      - ./config:/config
+      # 2. 数据库与持久化数据目录映射 (宿主机 ./data -> 容器 /data)
+      - ./data:/data

@@ -1,0 +1,30 @@
+{
+  "actors_pipeline_msos0wtd": {
+    "cookies": "list_mode=h; theme=auto; _ym_uid=1784214279346724640; _ym_d=1784214279; over18=1; locale=zh-CN; _rucaptcha_session_id=989e347b28ab2d03bfe8bb6f94967831; remember_me_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IkluRlFWVGwxYUdkbFMxUlZkelZHTFhoUWQwVTJJZz09IiwiZXhwIjoiMjAyNi0wOC0xMlQxMzozODo1NS4wMDBaIiwicHVyIjoiY29va2llLnJlbWVtYmVyX21lX3Rva2VuIn19--4b820920e3faf31e3e53ec52c114814b7d86d896; _ym_isad=2; _jdb_session=gLojInA2qdyViTSAldplRvPDZgLdW01nKkyN0hOEQ1%2B8IjS4PQ%2BwH1TdygRmMyev0SJqgStTqDxVxX6a0FvAjqzkTwbdZUfAkGK7PpF1F14EvecdnOcOnnpvMqiIPdjeihhqpzYzr7k6dgcDO7DTYQaFaU812JN%2B5fnCw70aelzRYTASFM64YinhppkMbWs3T8pr%2BYKZCbf4RUtx5TSvfsQVrDWiZi6H%2BwMwnoCpgeCZk5eLYflSbtPWnLs9CbcT4%2FvVJppC%2BmHcCcsgjdB%2FN4zloj7%2Fyt0brhq6O7wHvoXL93Fm%2F8dVHXttgV6cZMDrT%2FWjka%2Bd4ErjzYuF03jOuaFtv93ZfGAg25Wvy915FJJEEUTKqm7y4fHWbXbP4YuDzyQ%3D--Jd8%2FowM9s2tetmMw--Q%2BOQ9jvbiFass6pg4U3tfQ%3D%3D; cf_clearance=CWeXmgLBwrhMHWUdThMNt77d7_4LabHcs8G0Wva2mjU-1786020431-1.2.1.1-I7WhfTYLUiDDDxgNJSH_p33I8CO3xTWtcMnd8MM0X31MAohfqv1Ci5mY8LSZqD5zFz6SudNDFS1pB_d59rQt_amUD5YUGZiqPuJSDxMImyhtm_B5HWjv3YQAowr09F62TE0RUGB9sCJJx5TZZpG66PCiYmMFbiZCkDvHhOtjqfC6iph_qbRD5dbs1CsnDnyBxjCPxuONlKFNOyyKd93Qry0DZBV4KNiirsFqN1SyIoFNiAL1z.HHR4t2teNqr5CRENyUfJScI.xVyGPRcnwcynwLI26TrLGMEE7mhk7kGEUF1g2leY3Iq29tyA8gVzSh1yjgUgR4K00hG1vdYubZlEyo5QMGRE1cBXIHhYAnYUnuB1avxDNtP6QpZsivY4SCAke1EhIX3G5ptFrTTLJVyTfqPU4dm2f9PlYiwgbLVenqi4Jl4krghr8RzyvSO7ZZCKmj3QK7phw9Ne9AV6DkWQ",
+    "job_id": "actors_pipeline_msos0wtd",
+    "job_type": "actors_pipeline",
+    "target_url": null,
+    "target_urls": null,
+    "cron_expression": "0 3 * * *",
+    "max_pages": 999,
+    "auto_fetch_details": true,
+    "smart_incremental": false,
+    "time_range": "today",
+    "magnet_type": "smart_priority",
+    "task_name": "全量订阅演员一条龙 [全量翻页 | 抓取元数据入库]"
+  },
+  "transfer_push_cron_msos1dcj": {
+    "cookies": "list_mode=h; theme=auto; _ym_uid=1784214279346724640; _ym_d=1784214279; over18=1; locale=zh-CN; _rucaptcha_session_id=989e347b28ab2d03bfe8bb6f94967831; remember_me_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IkluRlFWVGwxYUdkbFMxUlZkelZHTFhoUWQwVTJJZz09IiwiZXhwIjoiMjAyNi0wOC0xMlQxMzozODo1NS4wMDBaIiwicHVyIjoiY29va2llLnJlbWVtYmVyX21lX3Rva2VuIn19--4b820920e3faf31e3e53ec52c114814b7d86d896; _ym_isad=2; _jdb_session=gLojInA2qdyViTSAldplRvPDZgLdW01nKkyN0hOEQ1%2B8IjS4PQ%2BwH1TdygRmMyev0SJqgStTqDxVxX6a0FvAjqzkTwbdZUfAkGK7PpF1F14EvecdnOcOnnpvMqiIPdjeihhqpzYzr7k6dgcDO7DTYQaFaU812JN%2B5fnCw70aelzRYTASFM64YinhppkMbWs3T8pr%2BYKZCbf4RUtx5TSvfsQVrDWiZi6H%2BwMwnoCpgeCZk5eLYflSbtPWnLs9CbcT4%2FvVJppC%2BmHcCcsgjdB%2FN4zloj7%2Fyt0brhq6O7wHvoXL93Fm%2F8dVHXttgV6cZMDrT%2FWjka%2Bd4ErjzYuF03jOuaFtv93ZfGAg25Wvy915FJJEEUTKqm7y4fHWbXbP4YuDzyQ%3D--Jd8%2FowM9s2tetmMw--Q%2BOQ9jvbiFass6pg4U3tfQ%3D%3D; cf_clearance=CWeXmgLBwrhMHWUdThMNt77d7_4LabHcs8G0Wva2mjU-1786020431-1.2.1.1-I7WhfTYLUiDDDxgNJSH_p33I8CO3xTWtcMnd8MM0X31MAohfqv1Ci5mY8LSZqD5zFz6SudNDFS1pB_d59rQt_amUD5YUGZiqPuJSDxMImyhtm_B5HWjv3YQAowr09F62TE0RUGB9sCJJx5TZZpG66PCiYmMFbiZCkDvHhOtjqfC6iph_qbRD5dbs1CsnDnyBxjCPxuONlKFNOyyKd93Qry0DZBV4KNiirsFqN1SyIoFNiAL1z.HHR4t2teNqr5CRENyUfJScI.xVyGPRcnwcynwLI26TrLGMEE7mhk7kGEUF1g2leY3Iq29tyA8gVzSh1yjgUgR4K00hG1vdYubZlEyo5QMGRE1cBXIHhYAnYUnuB1avxDNtP6QpZsivY4SCAke1EhIX3G5ptFrTTLJVyTfqPU4dm2f9PlYiwgbLVenqi4Jl4krghr8RzyvSO7ZZCKmj3QK7phw9Ne9AV6DkWQ",
+    "job_id": "transfer_push_cron_msos1dcj",
+    "job_type": "transfer_push",
+    "target_url": null,
+    "target_urls": null,
+    "cron_expression": "0 3 * * *",
+    "max_pages": 1,
+    "auto_fetch_details": true,
+    "smart_incremental": true,
+    "time_range": "today",
+    "magnet_type": "magnet_4k",
+    "task_name": "115 离线自动推送 [时间段: 今天抓取 | 自动对齐115真实状态]"
+  }
+}
