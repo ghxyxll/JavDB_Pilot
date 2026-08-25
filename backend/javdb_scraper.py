@@ -890,6 +890,7 @@ class JavDBScraper:
                         self.safe_log(f"⚠️ [Parse Guard] 番号 [{code}] 详情页未匹配到有效信息，标记为已处理。", "warning")
                     self._mark_detail_fetched_only(code)
                 else:
+                    self._update_movie_detail(code, details, all_magnets, magnets)
                     has_uc = bool(magnets.get('uc'))
                     try:
                         all_m_list = json.loads(all_magnets) if all_magnets else []

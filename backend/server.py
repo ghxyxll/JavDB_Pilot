@@ -533,6 +533,11 @@ class SystemLoginRequest(BaseModel):
     username: str = Field(..., description="管理员用户名", example="admin")
     password: str = Field(..., description="管理员密码", example="admin123456")
 
+class UpdateProfileRequest(BaseModel):
+    old_password: str = Field(..., description="校验原旧密码")
+    new_username: Optional[str] = Field(None, description="新用户名(留空表示不修改用户名)", example="admin_new")
+    new_password: Optional[str] = Field(None, description="新密码(留空表示不修改密码)", example="new_pass_123")
+
 # ================= 3. API 路由实现 =================
 
 # --- 系统安全认证与初始化 (System Web Auth) ---
@@ -624,6 +629,71 @@ def system_user_logout(authorization: Optional[str] = Header(None)):
         token = authorization[7:].strip()
         revoke_session(token)
     return {"code": 200, "message": "注销成功"}
+
+@app.post("/api/v1/system/change-password", tags=["01. 模拟登录 (Auth)"])
+@app.post("/api/v1/system/update-profile", tags=["01. 模拟登录 (Auth)"])
+def update_system_profile(req: UpdateProfileRequest, authorization: Optional[str] = Header(None)):
+    """在线修改管理员用户名与密码：校验原旧密码后更新账号信息"""
+    token = None
+    if authorization and authorization.startswith("Bearer "):
+        token = authorization[7:].strip()
+    session_user = verify_token(token) if token else None
+    if not session_user:
+        raise HTTPException(status_code=401, detail="未认证或登录已过期，请重新登录")
+
+    current_username = session_user["username"]
+    conn = sqlite3.connect(USER_DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, password_hash, salt FROM users WHERE username = ?", (current_username,))
+    row = cursor.fetchone()
+
+    if not row:
+        conn.close()
+        raise HTTPException(status_code=404, detail="找不到当前用户记录")
+
+    user_id, stored_hash, salt = row
+    if not verify_password(req.old_password, stored_hash, salt):
+        conn.close()
+        raise HTTPException(status_code=400, detail="原旧密码输入不正确，校验失败！")
+
+    final_username = current_username
+    target_new_username = req.new_username.strip() if req.new_username and req.new_username.strip() else None
+    
+    if target_new_username and target_new_username != current_username:
+        if len(target_new_username) < 2:
+            conn.close()
+            raise HTTPException(status_code=400, detail="新用户名长度至少需 2 个字符")
+        cursor.execute("SELECT id FROM users WHERE username = ? AND id != ?", (target_new_username, user_id))
+        if cursor.fetchone():
+            conn.close()
+            raise HTTPException(status_code=400, detail=f"用户名 [{target_new_username}] 已被占用，请使用其他名称")
+        
+        cursor.execute("UPDATE users SET username = ? WHERE id = ?", (target_new_username, user_id))
+        cursor.execute("UPDATE sessions SET username = ? WHERE user_id = ?", (target_new_username, user_id))
+        final_username = target_new_username
+
+    target_new_pwd = req.new_password.strip() if req.new_password and req.new_password.strip() else None
+    if target_new_pwd:
+        if len(target_new_pwd) < 4:
+            conn.close()
+            raise HTTPException(status_code=400, detail="新密码长度至少需 4 个字符")
+        new_hash, new_salt = hash_password(target_new_pwd)
+        cursor.execute("UPDATE users SET password_hash = ?, salt = ? WHERE id = ?", (new_hash, new_salt, user_id))
+
+    cursor.execute("DELETE FROM sessions WHERE user_id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+
+    new_token = create_session(user_id, final_username)
+    logger.info(f"🔑 [System Auth] 管理员 [{current_username}] 已成功更新凭据（最新用户名: {final_username}）！")
+    return {
+        "code": 200,
+        "message": "账号信息修改成功！已更新加密凭证",
+        "data": {
+            "token": new_token,
+            "username": final_username
+        }
+    }
 
 # --- 模拟直登 Auth ---
 class LoginCaptchaRequest(BaseModel):

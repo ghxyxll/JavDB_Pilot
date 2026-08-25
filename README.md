@@ -65,7 +65,7 @@
                    v                                   v
 +----------------------------------+   +----------------------------------+
 |        SQLite Databases          |   |        External Services         |
-|  - javdb_spider.db (Movies/Pushes)|   |  - JavDB Source Site             |
+|  - javdb_standalone.db (Movies/Pushes)|   |  - JavDB Source Site             |
 |  - user.db (Users/Sessions)      |   |  - 115 Offline Gateway API       |
 +----------------------------------+   +----------------------------------+
 ```
@@ -181,7 +181,7 @@ python reset_password.py
 | 配置项 | 默认值 | 说明 |
 | :--- | :--- | :--- |
 | `BASE_URL` | `https://javdb.com` | JavDB 站点镜像主页地址 |
-| `DEFAULT_DB_PATH` | `data/javdb_spider.db` | 主业务 SQLite 数据库存储路径 |
+| `DEFAULT_DB_PATH` | `data/javdb_standalone.db` | 主业务 SQLite 数据库存储路径 |
 | `DEFAULT_COOKIES` | `""` | 用于绕过防爬过盾与拉取订阅的 JavDB 登录 Cookie |
 | `REQUEST_DELAY_MIN` | `1.5` | 抓取请求随机等待延迟最小值（秒） |
 | `REQUEST_DELAY_MAX` | `3.5` | 抓取请求随机等待延迟最大值（秒） |

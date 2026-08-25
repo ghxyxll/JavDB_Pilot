@@ -91,6 +91,41 @@
           <textarea v-model="form.DEFAULT_COOKIES" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3 text-slate-200 font-mono text-[11px] focus:border-indigo-500 outline-none shadow-inner"></textarea>
         </div>
       </div>
+
+      <!-- Change Admin Profile Sub-Card -->
+      <div class="mt-4 pt-4 border-t border-slate-800/80">
+        <h4 class="text-xs font-bold text-slate-200 mb-3 flex items-center space-x-2">
+          <span class="text-indigo-400">👤 修改管理员账号与密码</span>
+        </h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+          <div>
+            <label class="block text-slate-400 mb-1 font-medium">当前旧密码 <span class="text-rose-400">*</span> (验证身份)</label>
+            <input v-model="oldPassword" type="password" placeholder="输入当前旧密码" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-slate-200 focus:border-indigo-500 outline-none" />
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1 font-medium">新用户名 (可选)</label>
+            <input v-model="newUsername" type="text" placeholder="留空则保持当前用户名" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-slate-200 focus:border-indigo-500 outline-none" />
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1 font-medium">新密码 (可选，至少4位)</label>
+            <input v-model="newPassword" type="password" placeholder="留空则保持原密码" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-slate-200 focus:border-indigo-500 outline-none" />
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1 font-medium">确认新密码</label>
+            <input v-model="confirmPassword" type="password" placeholder="再次输入新密码" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-slate-200 focus:border-indigo-500 outline-none" />
+          </div>
+        </div>
+        <div class="mt-3 flex justify-end">
+          <button 
+            @click="handleUpdateProfile" 
+            :disabled="changingPassword || !oldPassword || (!newUsername && !newPassword)"
+            class="px-4 py-2 bg-indigo-600/80 hover:bg-indigo-600 disabled:opacity-50 text-white font-bold text-xs rounded-xl transition shadow-md cursor-pointer flex items-center space-x-1.5"
+          >
+            <Key class="w-3.5 h-3.5" />
+            <span>{{ changingPassword ? '正在更新...' : '确认更新管理员账号信息' }}</span>
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Section 2: [network] 网络与代理 -->
@@ -311,8 +346,8 @@
 
 <script setup>
 import { ref, reactive, onMounted, nextTick } from 'vue';
-import { Sliders, RefreshCw, Save, Terminal } from '@lucide/vue';
-import api, { formatApiError } from '../api';
+import { Sliders, RefreshCw, Save, Terminal, Key } from '@lucide/vue';
+import api, { formatApiError, setAuthToken } from '../api';
 
 const loading = ref(false);
 const saving = ref(false);
@@ -320,6 +355,70 @@ const activeCategory = ref('all');
 const logContent = ref('');
 const logLines = ref(300);
 const logTerminal = ref(null);
+
+// Admin Profile Change State
+const oldPassword = ref('');
+const newUsername = ref('');
+const newPassword = ref('');
+const confirmPassword = ref('');
+const changingPassword = ref(false);
+
+async function handleUpdateProfile() {
+  if (!oldPassword.value) {
+    window.$toast?.('请输入当前旧密码进行身份验证！', 'warning');
+    return;
+  }
+  if (!newUsername.value && !newPassword.value) {
+    window.$toast?.('请至少输入新用户名或新密码！', 'warning');
+    return;
+  }
+  if (newUsername.value && newUsername.value.trim().length < 2) {
+    window.$toast?.('新用户名长度不能少于 2 个字符！', 'warning');
+    return;
+  }
+  if (newPassword.value) {
+    if (newPassword.value.length < 4) {
+      window.$toast?.('新密码长度不能少于 4 个字符！', 'warning');
+      return;
+    }
+    if (newPassword.value !== confirmPassword.value) {
+      window.$toast?.('两次输入的新密码不一致，请重试！', 'warning');
+      return;
+    }
+  }
+
+  changingPassword.value = true;
+  try {
+    const payload = {
+      old_password: oldPassword.value,
+      new_username: newUsername.value ? newUsername.value.trim() : null,
+      new_password: newPassword.value ? newPassword.value.trim() : null
+    };
+
+    const res = await api.post('/system/update-profile', payload);
+    if (res.data?.code === 200 && res.data?.data) {
+      if (res.data.data.token) {
+        setAuthToken(res.data.data.token);
+      }
+      if (res.data.data.username) {
+        localStorage.setItem('sys_username', res.data.data.username);
+      }
+      window.$toast?.(res.data.message || '账号信息已成功更新！', 'success', '更新成功');
+      oldPassword.value = '';
+      newUsername.value = '';
+      newPassword.value = '';
+      confirmPassword.value = '';
+      // Refresh page to update sidebar username display
+      setTimeout(() => {
+        window.location.reload();
+      }, 800);
+    }
+  } catch (err) {
+    window.$toast?.('更新账号失败: ' + formatApiError(err), 'error', '验证错误');
+  } finally {
+    changingPassword.value = false;
+  }
+}
 
 const categoryTabs = [
   { id: 'all', label: '全部参数' },

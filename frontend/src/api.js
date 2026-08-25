@@ -46,7 +46,11 @@ api.interceptors.request.use((config) => {
   const method = (config.method || '').toLowerCase();
   
   if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`;
+    if (config.headers.set) {
+      config.headers.set('Authorization', `Bearer ${token}`);
+    } else {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
   }
 
   if (['post', 'put', 'patch'].includes(method)) {

@@ -1,12 +1,20 @@
 <template>
   <div class="h-screen bg-slate-950 text-slate-100 flex overflow-hidden font-sans selection:bg-sky-500 selection:text-white">
-    <!-- Auth Guard: Login / Admin Init Screen -->
+    <!-- 1. Silent Initial Auth Verification Screen (Prevents ANY View Flashing) -->
+    <div v-if="authChecking" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950">
+      <div class="flex flex-col items-center space-y-3 animate-pulse">
+        <div class="w-8 h-8 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin"></div>
+      </div>
+    </div>
+
+    <!-- 2. Auth Guard: Login / Admin Init Screen (Only rendered AFTER auth checking confirms NOT authenticated) -->
     <LoginView 
-      v-if="!isAuthenticated" 
+      v-else-if="!isAuthenticated" 
       :is-initialized="isInitialized" 
       @login-success="handleLoginSuccess" 
     />
 
+    <!-- 3. Main Application View (Only rendered AFTER auth checking confirms IS authenticated) -->
     <template v-else>
       <!-- Left Full-Height Sidebar (Stretch from top 0 to bottom 0) -->
       <SidebarNav 
@@ -67,7 +75,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { Menu } from '@lucide/vue';
-import { getSavedCookie, removeAuthToken } from './api';
+import { getSavedCookie, getAuthToken, removeAuthToken } from './api';
 import api from './api';
 
 import SidebarNav from './components/SidebarNav.vue';
@@ -108,10 +116,11 @@ function toggleSidebarCollapse() {
   localStorage.setItem('sidebar_collapsed', String(isSidebarCollapsed.value));
 }
 
-// Auth state
+// Auth state initialization (pre-checks local token to prevent login view flashing)
+const authChecking = ref(true);
 const isInitialized = ref(true);
-const isAuthenticated = ref(false);
-const username = ref('');
+const isAuthenticated = ref(localStorage.getItem('sys_authenticated') === 'true' || Boolean(getAuthToken()));
+const username = ref(localStorage.getItem('sys_username') || '');
 
 watch(activeTab, (newTab) => {
   if (VALID_TABS.includes(newTab)) {
@@ -186,19 +195,36 @@ async function checkAuthStatus() {
       username.value = res.data.data.username || '';
       
       if (isAuthenticated.value) {
+        localStorage.setItem('sys_authenticated', 'true');
+        if (username.value) {
+          localStorage.setItem('sys_username', username.value);
+        }
         checkCookieState();
         fetchStats();
+      } else {
+        removeAuthToken();
+        localStorage.removeItem('sys_authenticated');
+        localStorage.removeItem('sys_username');
       }
     }
   } catch (err) {
     console.error('Check system auth status error', err);
+  } finally {
+    authChecking.value = false;
   }
 }
 
 function handleLoginSuccess(data) {
   isInitialized.value = true;
   isAuthenticated.value = true;
+  localStorage.setItem('sys_authenticated', 'true');
   username.value = data.username || '';
+  if (username.value) {
+    localStorage.setItem('sys_username', username.value);
+  }
+  if (data.token) {
+    setAuthToken(data.token);
+  }
   checkCookieState();
   fetchStats();
   window.$toast?.(`欢迎回来，${username.value}！`, 'success', '安全认证成功');
@@ -211,6 +237,8 @@ async function handleLogout() {
     // Ignore error
   } finally {
     removeAuthToken();
+    localStorage.removeItem('sys_authenticated');
+    localStorage.removeItem('sys_username');
     isAuthenticated.value = false;
     username.value = '';
     window.$toast?.('您已成功安全注销退出', 'info', '安全提示');

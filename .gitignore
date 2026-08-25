@@ -1,0 +1,42 @@
+# Python & Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# SQLite Databases & Dynamic Persistent Data (不上传私密个人数据)
+*.db
+*.sqlite
+*.sqlite3
+data/
+config/config.ini
+!config/config.ini.example
+user.db
+scheduled_jobs.json
+*.log
+
+# Frontend Node & Vite build output
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.cache/
+frontend/dist-ssr/
+*.local
+
+# Environment & Credentials
+.env
+.env.*
+!.env.example
+
+# IDE & OS Specific
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
